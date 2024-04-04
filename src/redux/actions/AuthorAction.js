@@ -5,7 +5,7 @@ import * as productTypes from "../types/AuthorType";
 export const createAuthor = (payload, history) => async (dispatch) => {
   console.log(payload);
   try {
-    const res = await privateAPI.post(`/author/create`, payload);
+    const res = await privateAPI.post(`/author/store`, payload);
     console.log(res.data);
     if (res) {
       swal("", res.data.message, "success").then(() =>
@@ -40,7 +40,7 @@ export const GetAllAuthors = () => async (dispatch) => {
   attachToken();
   console.log("Here", privateAPI.defaults.headers.common.Authorization);
   try {
-    const res = await privateAPI.get(`/author/get-all`);
+    const res = await privateAPI.get(`/author/all`);
     if (res) {
       console.log(res.data);
       dispatch({

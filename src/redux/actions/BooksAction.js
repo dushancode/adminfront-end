@@ -5,7 +5,7 @@ import * as productTypes from "../types/BooksType";
 export const createBook = (payload, history) => async (dispatch) => {
   try {
     console.log("payload : ", payload);
-    const res = await publicAPI.post(`/book/create`, payload);
+    const res = await publicAPI.post(`/book/store`, payload);
     if (res) {
       console.log(res.data);
       swal("", res.data.message, "success").then(() =>
@@ -39,7 +39,7 @@ export const UpdateBook = (payload, history) => async (dispatch) => {
 export const GetAllBooks = (payload) => async (dispatch) => {
   console.log(payload);
   try {
-    const res = await publicAPI.post(`/book/get-by-library-admin`, payload);
+    const res = await publicAPI.post(`/book/all`, payload);
     if (res) {
       console.log("Admin get All",res.data);
       dispatch({

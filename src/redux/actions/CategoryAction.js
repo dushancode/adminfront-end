@@ -5,7 +5,7 @@ import * as productTypes from "../types/CategoryType";
 export const createCategory = (payload, material) => async (dispatch) => {
   // console.log(payload);
   try {
-    const res = await publicAPI.post(material!="sub"?`/category/main/store`:`/category/sub/store`, payload);
+    const res = await publicAPI.post(material!="sub"?`/category/main/store`:`/category/sub/store`, {name:payload.name, library:" "});
     // console.log(res.data);
     if (res) {
       dispatch(GetAllCategory({ type: material }));
