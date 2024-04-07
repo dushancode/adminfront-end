@@ -1,4 +1,4 @@
-import { Button, Typography, Form, Input, Upload, Modal, Image } from 'antd';
+import { Button, Typography, Form, Input, Upload, Modal, Image, DatePicker } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import { useHistory, useLocation } from 'react-router';
 import { useState, useEffect } from 'react';
@@ -77,14 +77,17 @@ const AddAuthor = () => {
     payload.append('firstname', values.firstname);
     payload.append('lastname', values.lastname);
     payload.append('penName', values.penName);
-    payload.append('died', values.died);
+    payload.append('died', (values.died && values.died.format('YYYY-MM-DD')) || '');
     payload.append('nationality', values.nationality);
-    payload.append('firstPublishDate', values.firstPublishDate);
+    payload.append('firstPublishDate', (values.firstPublishDate && values.firstPublishDate.format('YYYY-MM-DD')) || '');
     payload.append('position', values.position);
     payload.append('income', values.income);
+    // Append the image file to the payload
+    if (fileList?.originFileObj) {
+      payload.append('profileImage', fileList.originFileObj);
+    }
     location?.state && payload.append('id', location?.state._id);
-    payload.append('pictures', fileList?.originFileObj);
-    location?.state && payload.append('pictures', location?.state.profilePic);
+    // location?.state && payload.append('pictures', location?.state.profilePic);
 
     location?.state
       ? await dispatch(UpdateAuthor(payload, history))
@@ -173,13 +176,21 @@ const AddAuthor = () => {
               <Input />
             </Form.Item>
             <Form.Item name='died' label='Author Died'>
-              <Input />
+              <DatePicker style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item
               name='firstPublishDate'
               label='Author First Publish Date'
+              rules={[
+                {
+                  required: true,
+                  message: 'Author First Publish Date Is Required'
+                }
+              ]}
+              requiredMark={'optional'}
             >
-              <Input />
+              {/* <Input /> */}
+              <DatePicker style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name='position' label='Author Position'>
               <Input />
@@ -190,7 +201,17 @@ const AddAuthor = () => {
             <Form.Item name='description' label='Author Description'>
               <Input.TextArea />
             </Form.Item>
-            <Form.Item name='image' label='Author Image'>
+            <Form.Item
+              name='image'
+              label='Author Image'
+              rules={[
+                {
+                  required: !fileList, // Make the field required only if fileList is null
+                  message: 'Author Image Is Required'
+                }
+              ]}
+              requiredMark={'optional'}
+            >
               <div style={{ display: 'flex' }}>
                 <Upload
                   listType='picture-card'
@@ -198,9 +219,9 @@ const AddAuthor = () => {
                   // onPreview={(file) => handlePreview(file, 1)}
                   onChange={(obj) => handleChange(obj, 1)}
                   accept='image/*'
-                  customRequest={() => {}}
+                  customRequest={() => { }}
                   showUploadList={{ showPreviewIcon: false }}
-                  multiple
+                  multiple={false}
                   maxCount={1}
                 >
                   {fileList ? null : uploadButton}

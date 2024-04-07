@@ -25,15 +25,20 @@ const Authors = () => {
   }, []);
 
   console.log(AllAuthors);
+  const BUCKET_NAME = 'bckt-mylibrary-testing'
+  const BUCKET_REGION = 'ap-south-1'
 
   useEffect(() => {
-    let authers=[];
-    if(AllAuthors){
-      AllAuthors?.map((data,index)=>{
-        console.log("dta here-->",data)
+    let authers = [];
+    if (AllAuthors) {
+      AllAuthors?.map((data, index) => {
+        console.log("dta here-->", data)
         authers.push({
           srno: index + 1,
-          pic: <Image height={80} width={90} src={data.profileImage} />,
+          // https://bckt-mylibrary-testing.s3.ap-south-1.amazonaws.com/
+          // if start with http keep don't change, if not add http url]
+          // TODO: check if image is not null 
+          pic: <Image height={80} width={90} src={data.profileImage ? data.profileImage.startsWith('http') ? data.profileImage : `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${data.profileImage}` : ''} />,
           firstname: data?.firstname,
           lastname: data?.lastname,
           penName: data?.penName,
@@ -45,39 +50,39 @@ const Authors = () => {
           phone: data?.phone,
           email: data?.email,
           designation: data.designation,
-           actions: (
-          <div className='actions-buttons'>
-            <Button
-              shape={'circle'}
-              icon={<EyeFilled />}
-              onClick={() => history.push(`/author/${data._id}`)}
-            />
-            <Button
-              shape={'circle'}
-              onClick={() =>
-                history.push({
-                  pathname: '/add-author',
-                  state: data,
-                })
-              }
-              icon={<EditFilled />}
-            />
-            {/* <Button
+          actions: (
+            <div className='actions-buttons'>
+              <Button
+                shape={'circle'}
+                icon={<EyeFilled />}
+                onClick={() => history.push(`/author/${data._id}`)}
+              />
+              <Button
+                shape={'circle'}
+                onClick={() =>
+                  history.push({
+                    pathname: '/add-author',
+                    state: data,
+                  })
+                }
+                icon={<EditFilled />}
+              />
+              {/* <Button
               shape={"circle"}
               icon={<DeleteFilled className="color-red" />}
             /> */}
-          </div>
-        ),  
-          })
+            </div>
+          ),
+        })
       })
       setData(authers);
     }
- 
 
-      
+
+
   }, [AllAuthors]);
 
-  
+
   return (
     <Layout active={'authors'}>
       <div className='white-card'>
