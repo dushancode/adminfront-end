@@ -12,12 +12,8 @@ export const userLogin = (payload, history) => async (dispatch) => {
       localStorage.setItem("userType", res.data.userType);
       localStorage.setItem("userId", res.data.user._id);
       localStorage.setItem("userData", JSON.stringify(res.data));
-      localStorage.setItem(
-        "userName",
-        res?.data?.user?.name
-          ? res?.data?.user?.name
-          : `${res?.data?.user.firstName} ${res?.data?.user.lastName}`
-      );
+
+      localStorage.setItem("userEmail", res?.data?.user?.email ? res?.data?.user?.email : "");
       console.log(res);
       dispatch({
         type: productTypes.LOGIN_DETAILS,

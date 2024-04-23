@@ -20,7 +20,7 @@ const VerticalLayout = ({ children, active }) => {
   const { Header, Sider, Content } = Layout;
   const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
-  const UserName = localStorage.getItem("userName");
+  const UserName = localStorage.getItem("userEmail"); // change this userName to userEmail to get the email of the user
   const UserData = JSON.parse(localStorage.getItem("userData"));
   const UserType = localStorage.getItem("userType");
 
@@ -74,9 +74,9 @@ const VerticalLayout = ({ children, active }) => {
             bottom: 0,
             background: "var(--sidebar-bg-color)",
           }}
-          // collapsedWidth={0}
-          // onMouseOver={() => setCollapsed(false)}
-          // onMouseOut={() =>   setCollapsed(true)}
+        // collapsedWidth={0}
+        // onMouseOver={() => setCollapsed(false)}
+        // onMouseOut={() =>   setCollapsed(true)}
         >
           <div className="logo">
             <img src={Logo} alt="logo" />
