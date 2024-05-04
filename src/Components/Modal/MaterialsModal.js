@@ -6,9 +6,10 @@ import { useLocation } from "react-router";
 import swal from "sweetalert";
 
 import { createCategory, UpdateCategory, GetCategoriesByID } from "../../redux";
+import { privateAPI } from "../../API";
 
-const SubCategoryModal = ({ type, PreviousData }) => {
-  const { Option } = Select;
+const MaterialsModal = ({ type, PreviousData }) => {
+    const { Option } = Select;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [name, setName] = useState(null);
   const [Loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ const SubCategoryModal = ({ type, PreviousData }) => {
     dispatch(GetCategoriesByID());
   }, []);
 
+
   const showModal = () => {
     setIsModalVisible(true);
     setName(PreviousData?.name);
@@ -29,81 +31,55 @@ const SubCategoryModal = ({ type, PreviousData }) => {
 
   const handleOk = async () => {
     setLoading(true);
-    let payload = {
-      name: name,
-      parentCategory: Category,
-      categoryType: "sub",
-    };
-    let payload2 = {
-      name: name,
-      parentCategory: Category,
-      id: PreviousData?._id,
-    };
-
-  
-
-    if (name) {
-      PreviousData
-        ? await dispatch(UpdateCategory(payload2, "sub"))
-        : await dispatch(createCategory(payload,"sub"));
-      setLoading(false);
-      setIsModalVisible(false);
-      setName("");
-      setCategory(null);
-    } else {
-      swal("", "Fill All Fields Correctly", "error");
+    try {
+      if (name) {
+        
+        const res = await privateAPI.post('material/create', { name });
+        setLoading(false);
+        setIsModalVisible(false);
+        setName('');
+        setCategory(null);
+        console.log(res.data); 
+      } else {
+        swal('', 'Fill All Fields Correctly', 'error');
+        setLoading(false);
+        setCategory(null);
+      }
+    } catch (error) {
+      swal('', error.toString(), 'error'); 
       setLoading(false);
       setCategory(null);
     }
   };
-
+  
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  function onChange(value) {
-    console.log(`selected ${value}`);
-    setCategory(value);
-  }
 
+
+    
   return (
     <div className="category-modal">
       {type ? (
         <span onClick={showModal}>{PreviousData?.name}</span>
       ) : (
         <Button type="primary" onClick={showModal} icon={<PlusCircleFilled />}>
-          Add Sub Category
+          Add Materials
         </Button>
       )}
       <Modal
         title={
           <Typography.Title level={3} className="black">
-            {PreviousData ? "Update Sub Category" : "Add Sub Category"}
+            {PreviousData ? "Update Sub Category" : "Add Materials"}
           </Typography.Title>
         }
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={false}
       >
+        
         <br />
-        <p className="black">Category Name</p>
-        <Select
-          showSearch
-          style={{ width: "100%" }}
-          placeholder="Select Category"
-          optionFilterProp="children"
-          onChange={onChange}
-          defaultValue={PreviousData?.mainCat}
-          filterOption={(input, option) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-        >
-          {AllCategory?.map((data) => (
-            <Option value={data._id}>{data.name}</Option>
-          ))}
-        </Select>
-        <br />
-        <br />
-        <p className="black">Sub Category Name</p>
+        <p className="black">Material Name</p>
         <Input value={name} onChange={(e) => setName(e.target.value)} />
         {/* <Select
           showSearch
@@ -119,16 +95,19 @@ const SubCategoryModal = ({ type, PreviousData }) => {
           <Option value="e">E-Magazines</Option>
           <Option value="lucy">Audio Books</Option>
         </Select> */}
-        {/* <Button
-          icon={<PlusOutlined />}
-          style={{ margin: "10px 0 0 0", border: "none" }}
+        
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={handleOk}
+          className="Save-Btn"
+          loading={Loading}
         >
-          Add New Sub Category
-        </Button> */}
-      
+          {PreviousData ? "Update" : "ADD"}
+        </Button>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default SubCategoryModal;
+export default MaterialsModal

@@ -2,6 +2,7 @@ import swal from "sweetalert";
 import { publicAPI, privateAPI, attachToken } from "../../API/index";
 import * as productTypes from "../types/AuthorType";
 
+
 export const createAuthor = (payload, history) => async (dispatch) => {
   console.log(payload);
   try {
@@ -18,6 +19,8 @@ export const createAuthor = (payload, history) => async (dispatch) => {
     console.log(err?.response?.data?.message);
   }
 };
+
+
 
 export const UpdateAuthor = (payload, history) => async (dispatch) => {
   console.log(payload);
@@ -36,6 +39,8 @@ export const UpdateAuthor = (payload, history) => async (dispatch) => {
   }
 };
 
+
+
 export const GetAllAuthors = () => async (dispatch) => {
   attachToken();
   console.log("Here", privateAPI.defaults.headers.common.Authorization);
@@ -53,6 +58,7 @@ export const GetAllAuthors = () => async (dispatch) => {
   }
 };
 
+
 export const ChangeAuthorStatus = (payload) => async (dispatch) => {
   console.log(payload);
   try {
@@ -65,6 +71,7 @@ export const ChangeAuthorStatus = (payload) => async (dispatch) => {
     console.log(err?.response?.data?.message);
   }
 };
+
 
 export const SearchAuthor = (payload) => async (dispatch) => {
   console.log(payload);

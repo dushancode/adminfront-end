@@ -63,6 +63,7 @@ export const ForgetVerifyCode = (payload, history) => async (dispatch) => {
   }
 };
 
+
 export const ForgetPassword = (payload, history) => async (dispatch) => {
   try {
     const res = await publicAPI.post(`/auth/change-password`, payload);
@@ -77,6 +78,8 @@ export const ForgetPassword = (payload, history) => async (dispatch) => {
   }
 };
 
+
+
 export const SelectedLibrary = (payload) => async (dispatch) => {
   console.log("Auth Actionn", payload);
   dispatch({
@@ -84,6 +87,8 @@ export const SelectedLibrary = (payload) => async (dispatch) => {
     payload: payload,
   });
 };
+
+
 
 export const UploadImage = (payload) => async (dispatch) => {
   //console.log("1111",payload)
@@ -98,6 +103,7 @@ export const UploadImage = (payload) => async (dispatch) => {
     swal("", err?.response?.data?.message || "Server Error", "error");
   }
 };
+
 
 
 export const UploadFile = (payload) => async (dispatch) => {

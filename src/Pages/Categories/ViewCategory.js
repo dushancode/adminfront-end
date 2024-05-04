@@ -3,6 +3,7 @@ import { Typography, Tree, Radio, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { DeleteFilled } from "@ant-design/icons";
 import { useHistory } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import {
   EyeFilled
@@ -12,32 +13,57 @@ import LayoutMain from "./../../Layout/LayoutMain";
 import DataTable from "../../Components/Table/DataTable";
 import CategoryModal from "../../Components/Modal/CategoryModal";
 import SubCategoryModal from "./../../Components/Modal/SubCategoryModal";
-import { GetAllCategory, GetMaterial, DeleteCategory } from "../../redux";
-import MaterialsModal from "../../Components/Modal/MaterialsModal";
+import { GetAllCategory, GetMaterial, DeleteCategory, GetSubCategoriesByID, DeleteSubCategory } from "../../redux";
+import { privateAPI } from "../../API";
 
-const Categories = () => {
-  const [data, setData] = useState(null);
+
+const ViewCategory = () => {
+    const [data, setData] = useState(null);
   const AllCategory = useSelector((state) => state.CategoryReducer.AllCategory);
-  const MaterialOption = useSelector((state) => state.CategoryReducer.Material);
   const dispatch = useDispatch();
   const [type, setType] = useState("");
-  const history = useHistory();
+  const { id } = useParams();
+  const [category, setCategory] = useState([]);
+  const [subCategory, setSubCategory] = useState([])
 
-  console.log("ggggggggggggggg",AllCategory)
+useEffect(()=>{
+
+},[])
 
   useEffect(() => {
-    dispatch(GetAllCategory({ type: "" }));
-    dispatch(GetMaterial());
-  }, []);
+    const fetchData = async () => {
+      dispatch(GetAllCategory({ type: "" }));
+      dispatch(GetMaterial());
+      dispatch(GetSubCategoriesByID(id));
+  
+      try {
+        const res = await privateAPI.get(`category/main/${id}`);
+        if (res && res.data) {
+          
+          setCategory(res.data);
+          const response = await privateAPI.get(`category/subcategory/${id}`);
+          setSubCategory(response.data);
+          
+        }
+        
+      } catch (error) {
+        // Handle error here
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, id, type]);
+
 
   const onSelect = (selectedKeys, info) => {
     console.log("info", info);
     console.log("selectedKeys", selectedKeys);
   };
-
+  
   useEffect(() => {
     let tempArr = [];
-    AllCategory?.map((data, index) => {
+    subCategory?.map((data, index) => {
       tempArr.push({
         key: data._id,
         srno: index + 1,
@@ -75,21 +101,17 @@ const Categories = () => {
         action: (
           <div className="" style={{ display: "flex", gap: "10px" }}>
             <Button
-                shape={'circle'}
-                icon={<EyeFilled />}
-                onClick={() => history.push(`/category/${data._id}`)}
-              />
-            <Button
               shape={"circle"}
               icon={<DeleteFilled className="color-red" />}
-              onClick={() => dispatch(DeleteCategory({ id: data._id }, type))}
+              onClick={() => {dispatch(DeleteSubCategory({ id: data._id }, type))
+            }}
             />
           </div>
         ),
       });
     });
     setData(tempArr && tempArr);
-  }, [AllCategory]);
+  }, [subCategory]);
 
   const columns = [
     {
@@ -97,13 +119,9 @@ const Categories = () => {
       dataIndex: "srno",
       key: "srno",
     },
+   
     {
-      title: "Materials",
-      dataIndex: "main",
-      key: "main",
-    },
-    {
-      title: "Category",
+      title: "SubCategory",
       dataIndex: "category",
     },
     {
@@ -112,62 +130,26 @@ const Categories = () => {
     },
   ];
 
-  const handleTabChange = (e) => {
-    setType(e.target.value);
-    if (e.target.value === "all") {
-      dispatch(GetAllCategory({ type: "" }));
-      setType("");
-    } else {
-      dispatch(GetAllCategory({ type: e.target.value }));
-    }
-  };
-
+  
   return (
     <LayoutMain active={"categories"}>
-      <div className="white-card">
-        <Typography.Title level={2}>Categories</Typography.Title>
-        <div
-          style={{
-            marginTop: "20px",
-            marginBottom: "20px",
-          }}
-        >
-          <Radio.Group
-            defaultValue="E-Book"
-            buttonStyle="solid"
-            onChange={handleTabChange}
-            value={type}
-          >
-            {MaterialOption?.map((mat) => (
-              <Radio.Button value={mat._id}>{mat.name}</Radio.Button>
-            ))}
-            <Radio.Button value="all">All</Radio.Button>
-          </Radio.Group>
-        </div>
-        <div className="ml-left-flex">
-          <CategoryModal catType={type} />
-          <SubCategoryModal />
-          <div style={{ marginLeft: '15px' }}>
-
-          <MaterialsModal />
-          </div>
-
-          
-        </div>
-        <div>
-          <DataTable
-            columns={columns}
-            data={data}
-            width={600}
-            pagination={true}
-            Search={true}
-            SearchRoute={"Category"}
-            loader={AllCategory === null ? true : false}
-          />
-        </div>
+    <div className="white-card">
+      <Typography.Title level={2}>{category.name}</Typography.Title>
+      
+      <div>
+        <DataTable
+          columns={columns}
+          data={data}
+          width={600}
+          pagination={true}
+          Search={true}
+          SearchRoute={"Category"}
+          loader={AllCategory === null ? true : false}
+        />
       </div>
-    </LayoutMain>
-  );
-};
+    </div>
+  </LayoutMain>
+  )
+}
 
-export default Categories;
+export default ViewCategory

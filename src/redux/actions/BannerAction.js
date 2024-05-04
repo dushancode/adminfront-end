@@ -18,6 +18,7 @@ export const createBanner = (payload, history) => async (dispatch) => {
   }
 };
 
+
 export const UpdateBanner = (payload, history) => async (dispatch) => {
   console.log(payload);
   try {
@@ -34,6 +35,7 @@ export const UpdateBanner = (payload, history) => async (dispatch) => {
   }
 };
 
+
 export const GetBanners = () => async (dispatch) => {
   try {
     const res = await publicAPI.get(`/banner/get-all`);
@@ -48,6 +50,8 @@ export const GetBanners = () => async (dispatch) => {
     console.log(err?.response?.data?.message);
   }
 };
+
+
 
 // export const ChangeStatus = (payload) => async (dispatch) => {
 //   console.log(payload);

@@ -19,6 +19,8 @@ export const createBook = (payload, history) => async (dispatch) => {
   }
 };
 
+
+
 export const UpdateBook = (payload, history) => async (dispatch) => {
   console.log("hit", payload);
   try {
@@ -36,6 +38,8 @@ export const UpdateBook = (payload, history) => async (dispatch) => {
   }
 };
 
+
+
 export const GetAllBooks = (payload) => async (dispatch) => {
   console.log(payload);
   try {
@@ -51,6 +55,8 @@ export const GetAllBooks = (payload) => async (dispatch) => {
     console.log(err?.response?.data?.message);
   }
 };
+
+
 
 export const GetAllBooksByType = (payload) => async (dispatch) => {
   console.log(payload);
@@ -71,6 +77,7 @@ export const GetAllBooksByType = (payload) => async (dispatch) => {
   }
 };
 
+
 export const ChangeBookStatus = (payload, libraries) => async (dispatch) => {
   console.log(payload);
   try {
@@ -85,6 +92,7 @@ export const ChangeBookStatus = (payload, libraries) => async (dispatch) => {
     swal("", err?.response?.data?.message, "error");
   }
 };
+
 
 export const SearchBook = (payload) => async (dispatch) => {
   console.log(payload);
@@ -101,6 +109,7 @@ export const SearchBook = (payload) => async (dispatch) => {
     console.log(err?.response?.data?.message);
   }
 };
+
 
 export const DeleteBook = (payload, libraries) => async (dispatch) => {
   // console.log(payload);
