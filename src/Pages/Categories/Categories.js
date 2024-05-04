@@ -1,34 +1,35 @@
 import { useEffect, useState } from "react";
-import { Typography, Tree, Radio, Button } from "antd";
+import { Typography, Tree, Radio, Button, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { DeleteFilled } from "@ant-design/icons";
-import { useHistory } from 'react-router';
-
-import {
-  EyeFilled
-} from '@ant-design/icons';
 
 import LayoutMain from "./../../Layout/LayoutMain";
 import DataTable from "../../Components/Table/DataTable";
 import CategoryModal from "../../Components/Modal/CategoryModal";
 import SubCategoryModal from "./../../Components/Modal/SubCategoryModal";
-import { GetAllCategory, GetMaterial, DeleteCategory } from "../../redux";
-import MaterialsModal from "../../Components/Modal/MaterialsModal";
+import {
+  GetAllCategory,
+  GetMaterial,
+  DeleteCategory,
+  GetAllSubCategories,
+} from "../../redux";
+import { Option } from "antd/lib/mentions";
 
 const Categories = () => {
   const [data, setData] = useState(null);
   const AllCategory = useSelector((state) => state.CategoryReducer.AllCategory);
+  const AllSubCategory = useSelector(
+    (state) => state.CategoryReducer.ALLSubCategories
+  );
   const MaterialOption = useSelector((state) => state.CategoryReducer.Material);
   const dispatch = useDispatch();
   const [type, setType] = useState("");
-  const history = useHistory();
-
-  console.log("ggggggggggggggg",AllCategory)
 
   useEffect(() => {
     dispatch(GetAllCategory({ type: "" }));
     dispatch(GetMaterial());
-  }, []);
+    dispatch(GetAllSubCategories());
+  }, [dispatch, AllSubCategory, AllCategory]);
 
   const onSelect = (selectedKeys, info) => {
     console.log("info", info);
@@ -37,18 +38,19 @@ const Categories = () => {
 
   useEffect(() => {
     let tempArr = [];
-    AllCategory?.map((data, index) => {
+    (AllCategory?.reverse() || []).map((data, index) => {
+      // console.log("kkkkkkkkkkkkk" , data._id)
       tempArr.push({
         key: data._id,
         srno: index + 1,
         // main:
-        //   data.categoryType === "sub"
-        //     ? data.mainCat.material.name
-        //     : data.material.name,
+        // data.categoryType === "sub"
+        // ? data.mainCat.material.name
+        // : data.material.name,
         main:
-            data.categoryType === "sub"
-              ? data.mainCat?.material?.name || "N/A"
-              : data.material?.name || "N/A",
+          data.categoryType === "sub"
+            ? data.mainCat?.material?.name || "N/A"
+            : data.material?.name || "N/A",
         category: (
           <Tree
             onSelect={onSelect}
@@ -63,7 +65,6 @@ const Categories = () => {
                   />
                 ),
                 key: data?._id,
-
                 children: data?.sub_categories?.map((sub) => ({
                   title: <SubCategoryModal type={true} PreviousData={sub} />,
                   key: sub._id,
@@ -72,13 +73,31 @@ const Categories = () => {
             ]}
           />
         ),
+        subcategory: (
+          <div>
+            <Select
+              style={{ width: 120 }}
+              defaultValue={
+                AllSubCategory?.filter(
+                  (data2) => data2.parentCategory === data?._id
+                )?.[0]?._id
+              }
+            >
+              {AllSubCategory?.filter(
+                (data2) => data2.parentCategory === data?._id
+              ).map(
+                (data2) =>
+                  data2?.name ? (
+                    <Option key={data2._id} className="">
+                      {data2.name}
+                    </Option>
+                  ) : null
+              )}
+            </Select>
+          </div>
+        ),
         action: (
-          <div className="" style={{ display: "flex", gap: "10px" }}>
-            <Button
-                shape={'circle'}
-                icon={<EyeFilled />}
-                onClick={() => history.push(`/category/${data._id}`)}
-              />
+          <div className="">
             <Button
               shape={"circle"}
               icon={<DeleteFilled className="color-red" />}
@@ -89,7 +108,7 @@ const Categories = () => {
       });
     });
     setData(tempArr && tempArr);
-  }, [AllCategory]);
+  }, [AllCategory, AllCategory, dispatch, type]);
 
   const columns = [
     {
@@ -105,6 +124,10 @@ const Categories = () => {
     {
       title: "Category",
       dataIndex: "category",
+    },
+    {
+      title: "Sub Category",
+      dataIndex: "subcategory",
     },
     {
       title: "Action",
@@ -147,12 +170,6 @@ const Categories = () => {
         <div className="ml-left-flex">
           <CategoryModal catType={type} />
           <SubCategoryModal />
-          <div style={{ marginLeft: '15px' }}>
-
-          <MaterialsModal />
-          </div>
-
-          
         </div>
         <div>
           <DataTable

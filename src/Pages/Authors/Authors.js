@@ -67,7 +67,6 @@ const Authors = () => {
                 }
                 icon={<EditFilled />}
               />
-              
               {/* <Button
               shape={"circle"}
               icon={<DeleteFilled className="color-red" />}

@@ -37,7 +37,6 @@ import PrivateRoutes from "./PrivateRoutes";
 import ProductCategory from "./Pages/Shop/ProductCategory";
 import AddProductCategory from "./Pages/AddNewProduct/AddProductCategory";
 import Profile from "./Pages/Profile/Profile";
-import ViewCategory from "./Pages/Categories/ViewCategory";
 
 const Routes = () => {
   return (
@@ -52,18 +51,11 @@ const Routes = () => {
         <PrivateRoutes path="/readers" exact component={Readers} />
         <PrivateRoutes path="/reader/:id" exact component={ViewReader} />
         <PrivateRoutes path="/categories" exact component={Categories} />
-
-
-        <PrivateRoutes path="/category/:id" exact component={ViewCategory} />
-
-
-
         <PrivateRoutes path="/materials" exact component={Books} />
         <PrivateRoutes path="/material/:id" exact component={ViewBook} />
         <PrivateRoutes path="/add-material" exact component={AddNewBook} />
         <PrivateRoutes path="/authors" exact component={Authors} />
         <PrivateRoutes path="/author/:id" exact component={ViewAuthor} />
-
         <PrivateRoutes path="/sales" exact component={Sales} />
         <PrivateRoutes path="/payments" exact component={Payment} />
         <PrivateRoutes path="/customer-care" exact component={CustomerCare} />

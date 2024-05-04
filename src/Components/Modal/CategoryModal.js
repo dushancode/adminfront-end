@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Typography, Input, Checkbox, Row, Col } from "antd";
-import { PlusCircleFilled, EditFilled } from "@ant-design/icons";
+import { PlusCircleFilled } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router";
+
 import swal from "sweetalert";
 
 import { createCategory, UpdateCategory, GetMaterial } from "../../redux";
+
 
 const CategoryModal = ({ type, PreviousData, catType }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -14,11 +15,11 @@ const CategoryModal = ({ type, PreviousData, catType }) => {
   const [Loading, setLoading] = useState(false);
   const [name, setName] = useState(null);
   const MaterialOption = useSelector((state) => state.CategoryReducer.Material);
-  const [selectType, setselectType] = useState("");
+  const [selectType, setSelectType] = useState("");
 
   useEffect(() => {
     dispatch(GetMaterial());
-  }, []);
+  }, [dispatch]);
 
   const showModal = () => {
     console.log(PreviousData);
@@ -29,19 +30,22 @@ const CategoryModal = ({ type, PreviousData, catType }) => {
 
   const handleOk = async () => {
     setLoading(true);
+
     let payload = {
       name: name,
       material: material,
       language: "en",
     };
+    
     let payload2 = {
       name: name,
       material: material,
       id: PreviousData?._id,
     };
+
     if (name) {
-      PreviousData != undefined
-        ?  dispatch(UpdateCategory(payload2, "main"))
+      PreviousData !== undefined
+        ?  dispatch(UpdateCategory(payload2, ))
         :  dispatch(createCategory(payload, "main"));
       setLoading(false);
       setIsModalVisible(false);
@@ -95,7 +99,7 @@ const CategoryModal = ({ type, PreviousData, catType }) => {
                 <Col xs={12} md={8}>
                   <Checkbox
                     value={data?._id}
-                    onClick={() => setselectType(data.name)}
+                    onClick={() => setSelectType(data.name)}
                   >
                     {data.name}
                   </Checkbox>

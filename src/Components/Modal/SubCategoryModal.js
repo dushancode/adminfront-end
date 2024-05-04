@@ -39,9 +39,7 @@ const SubCategoryModal = ({ type, PreviousData }) => {
       parentCategory: Category,
       id: PreviousData?._id,
     };
-
-  
-
+    console.log(payload);
     if (name) {
       PreviousData
         ? await dispatch(UpdateCategory(payload2, "sub"))
@@ -125,7 +123,15 @@ const SubCategoryModal = ({ type, PreviousData }) => {
         >
           Add New Sub Category
         </Button> */}
-      
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={handleOk}
+          className="Save-Btn"
+          loading={Loading}
+        >
+          {PreviousData ? "Update" : "ADD"}
+        </Button>
       </Modal>
     </div>
   );

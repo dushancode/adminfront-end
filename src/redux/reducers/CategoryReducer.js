@@ -3,6 +3,7 @@ import * as productTypes from "../types/CategoryType";
 const initialState = {
   Category: null,
   AllCategory: null,
+  ALLSubCategories: null,
   Material: null,
   ALLCategoriesById: null,
   ALLSubCategoriesById: null,
@@ -26,6 +27,11 @@ const CategoryReducer = (state = initialState, action) => {
       return {
         ...state,
         ALLCategoriesById: payload,
+      };
+      case productTypes.GET_ALL_SUB_CATEGORY:
+      return {
+        ...state,
+        ALLSubCategories: payload,
       };
     case productTypes.GET_ALL_SUB_CATEGORY_BY_ID:
       return {
