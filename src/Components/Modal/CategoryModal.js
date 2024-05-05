@@ -17,9 +17,7 @@ const CategoryModal = ({ type, PreviousData, catType }) => {
   const MaterialOption = useSelector((state) => state.CategoryReducer.Material);
   const [selectType, setSelectType] = useState("");
 
-  useEffect(() => {
-    dispatch(GetMaterial());
-  }, [dispatch]);
+
 
   const showModal = () => {
     console.log(PreviousData);
@@ -49,8 +47,8 @@ const CategoryModal = ({ type, PreviousData, catType }) => {
         :  dispatch(createCategory(payload, "main"));
       setLoading(false);
       setIsModalVisible(false);
-      setName("");
-      setMaterial("");
+      setName();
+      setMaterial();
     } else {
       swal("", "Fill All Fields Correctly", "error");
       setLoading(false);

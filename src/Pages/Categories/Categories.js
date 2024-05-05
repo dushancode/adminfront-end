@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Typography, Tree, Radio, Button, Select } from "antd";
+import { Typography, Tree, Radio, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { DeleteFilled } from "@ant-design/icons";
 
@@ -13,7 +13,6 @@ import {
   DeleteCategory,
   GetAllSubCategories,
 } from "../../redux";
-import { Option } from "antd/lib/mentions";
 
 const Categories = () => {
   const [data, setData] = useState(null);
@@ -26,10 +25,10 @@ const Categories = () => {
   const [type, setType] = useState("");
 
   useEffect(() => {
-    dispatch(GetAllCategory({ type: "" }));
+    dispatch(GetAllCategory());
     dispatch(GetMaterial());
     dispatch(GetAllSubCategories());
-  }, [dispatch, AllSubCategory, AllCategory]);
+  }, [dispatch]);
 
   const onSelect = (selectedKeys, info) => {
     console.log("info", info);
@@ -38,23 +37,19 @@ const Categories = () => {
 
   useEffect(() => {
     let tempArr = [];
-    (AllCategory?.reverse() || []).map((data, index) => {
-      // console.log("kkkkkkkkkkkkk" , data._id)
+    AllCategory?.map((data, index) => {
       tempArr.push({
         key: data._id,
         srno: index + 1,
-        // main:
-        // data.categoryType === "sub"
-        // ? data.mainCat.material.name
-        // : data.material.name,
+
         main:
           data.categoryType === "sub"
             ? data.mainCat?.material?.name || "N/A"
             : data.material?.name || "N/A",
+
         category: (
           <Tree
             onSelect={onSelect}
-            // onCheck={onCheck}
             treeData={[
               {
                 title: (
@@ -64,38 +59,37 @@ const Categories = () => {
                     catType={type}
                   />
                 ),
-                key: data?._id,
-                children: data?.sub_categories?.map((sub) => ({
-                  title: <SubCategoryModal type={true} PreviousData={sub} />,
-                  key: sub._id,
-                })),
               },
             ]}
           />
         ),
+
         subcategory: (
-          <div>
-            <Select
-              style={{ width: 120 }}
-              defaultValue={
-                AllSubCategory?.filter(
-                  (data2) => data2.parentCategory === data?._id
-                )?.[0]?._id
-              }
-            >
-              {AllSubCategory?.filter(
-                (data2) => data2.parentCategory === data?._id
-              ).map(
-                (data2) =>
-                  data2?.name ? (
-                    <Option key={data2._id} className="">
-                      {data2.name}
-                    </Option>
-                  ) : null
-              )}
-            </Select>
+          <div key={index}>
+            {AllSubCategory?.filter(
+              (data2) => data2.parentCategory === data?._id
+            ).map((data2) =>
+              data2?.name ? (
+                <Tree
+                  onSelect={onSelect}
+                  treeData={[
+                    {
+                      title: (
+                        <SubCategoryModal
+                          type={true}
+                          PreviousData={data2}
+                          PreviousCategory={data}
+                        />
+                      ),
+                      key: data?._id,
+                    },
+                  ]}
+                />
+              ) : null
+            )}
           </div>
         ),
+
         action: (
           <div className="">
             <Button
@@ -108,7 +102,7 @@ const Categories = () => {
       });
     });
     setData(tempArr && tempArr);
-  }, [AllCategory, AllCategory, dispatch, type]);
+  }, [AllCategory, AllSubCategory, type, dispatch]);
 
   const columns = [
     {

@@ -1,24 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Modal, Button, Typography, Input, Select } from "antd";
-import { PlusCircleFilled, PlusOutlined, EditFilled } from "@ant-design/icons";
+import { PlusCircleFilled, } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router";
 import swal from "sweetalert";
+import { createCategory,  DeleteSubCategory, UpdateSubCategory } from "../../redux";
 
-import { createCategory, UpdateCategory, GetCategoriesByID } from "../../redux";
 
-const SubCategoryModal = ({ type, PreviousData }) => {
+const SubCategoryModal = ({ type, PreviousData , PreviousCategory}) => {
   const { Option } = Select;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [name, setName] = useState(null);
+  const [Category, setCategory] = useState();
   const [Loading, setLoading] = useState(false);
-  const [Category, setCategory] = useState(null);
+  const [LoadingDelete, setLoadingDelete] = useState(false);
   const AllCategory = useSelector((state) => state.CategoryReducer.AllCategory);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(GetCategoriesByID());
-  }, []);
+  
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -36,14 +33,15 @@ const SubCategoryModal = ({ type, PreviousData }) => {
     };
     let payload2 = {
       name: name,
-      parentCategory: Category,
+      parentCategory:  PreviousCategory?._id,
       id: PreviousData?._id,
     };
-    console.log(payload);
+
     if (name) {
       PreviousData
-        ? await dispatch(UpdateCategory(payload2, "sub"))
+        ? await dispatch(UpdateSubCategory(payload2, "sub"))
         : await dispatch(createCategory(payload,"sub"));
+        
       setLoading(false);
       setIsModalVisible(false);
       setName("");
@@ -62,7 +60,6 @@ const SubCategoryModal = ({ type, PreviousData }) => {
     console.log(`selected ${value}`);
     setCategory(value);
   }
-
   return (
     <div className="category-modal">
       {type ? (
@@ -90,39 +87,20 @@ const SubCategoryModal = ({ type, PreviousData }) => {
           placeholder="Select Category"
           optionFilterProp="children"
           onChange={onChange}
-          defaultValue={PreviousData?.mainCat}
+          defaultValue={PreviousCategory?._id}
           filterOption={(input, option) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-          {AllCategory?.map((data) => (
+          {PreviousCategory ? (<Option value={PreviousCategory._id}>{PreviousCategory.name}</Option>) : AllCategory?.map((data) => (
             <Option value={data._id}>{data.name}</Option>
           ))}
+          
         </Select>
         <br />
         <br />
         <p className="black">Sub Category Name</p>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
-        {/* <Select
-          showSearch
-          style={{ width: "100%" }}
-          placeholder="Select Category"
-          optionFilterProp="children"
-          onChange={onChange}
-          filterOption={(input, option) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-        >
-          <Option value="jack">E-Books</Option>
-          <Option value="e">E-Magazines</Option>
-          <Option value="lucy">Audio Books</Option>
-        </Select> */}
-        {/* <Button
-          icon={<PlusOutlined />}
-          style={{ margin: "10px 0 0 0", border: "none" }}
-        >
-          Add New Sub Category
-        </Button> */}
+        <Input value={name} onChange={(e) => setName(e.target.value)} />  
         <Button
           type="primary"
           htmlType="submit"
@@ -132,6 +110,18 @@ const SubCategoryModal = ({ type, PreviousData }) => {
         >
           {PreviousData ? "Update" : "ADD"}
         </Button>
+
+        {PreviousData? (<Button
+          type="primary"
+          htmlType="submit"
+          className="Save-Btn"
+          loading={LoadingDelete}
+          danger
+          style={{marginLeft:"8px"}}
+          onClick={() => dispatch(DeleteSubCategory({ id: PreviousData._id })).then(setIsModalVisible(false))}
+        >
+          Delete
+        </Button>) : ''}
       </Modal>
     </div>
   );

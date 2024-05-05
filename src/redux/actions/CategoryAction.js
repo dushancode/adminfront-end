@@ -6,7 +6,8 @@ export const createCategory = (payload, material) => async (dispatch) => {
   try {
     const res = await publicAPI.post(material!=="sub"?`/category/main/store`:`/category/sub/store`, {name:payload.name, parentCategory:payload.parentCategory});
     if (res) {
-      dispatch(GetAllCategory({ type: material }));
+      dispatch(GetAllCategory());
+      dispatch(GetAllSubCategories())
       swal("", res.data.message, "success");
     }
   } catch (err) {
@@ -31,20 +32,22 @@ export const UpdateCategory = (payload, catType) => async (dispatch) => {
 };
 
 export const GetAllCategory = (payload) => async (dispatch) => {
-  console.log("Payload1",payload)
+  console.log("Payload1",payload);
   try {
     const res = await publicAPI.get(`/category/main/all`);
     if (res) {
       console.log(res.data);
+      const reversedData = res.data.reverse();
       dispatch({
         type: productTypes.GET_ALL_CATEGORY,
-        payload: res.data,
+        payload: reversedData, 
       });
     }
   } catch (err) {
     console.log(err?.response?.data?.message);
   }
 };
+
 
 export const GetMaterial = () => async (dispatch) => {
   try {
@@ -154,6 +157,23 @@ export const DeleteCategory = (payload, catType) => async (dispatch) => {
   }
 };
 
+
+export const DeleteSubCategory = (payload) => async (dispatch) => {
+  try {
+    const res = await publicAPI.post(`/category/sub/delete/${payload.id}`, payload);
+    if (res) {
+      swal("", res.data.message, "success");
+      console.log(res.data);
+      dispatch(GetAllSubCategories());
+    }
+  } catch (err) {
+    console.log(err?.response?.data?.message);
+    swal("", err?.response?.data?.message, "error");
+  }
+};
+
+
+
 export const GetAllSubCategories = (payload) => async (dispatch) => {
   console.log(payload);
   try {
@@ -168,6 +188,22 @@ export const GetAllSubCategories = (payload) => async (dispatch) => {
       });
     }
   } catch (err) {
+    console.log(err?.response?.data?.message);
+  }
+};
+
+
+
+export const UpdateSubCategory = (payload, catType) => async (dispatch) => {
+  try {
+    const res = await publicAPI.post(`category/sub/update/${payload.id}`, {name: payload.name , parentCategory: payload.parentCategory});
+    if (res) {
+      dispatch(GetAllCategory({ type: catType }));
+      dispatch(GetAllSubCategories())
+      swal("", res.data.message, "success");
+    }
+  } catch (err) {
+    swal("", err?.response?.data?.message, "error");
     console.log(err?.response?.data?.message);
   }
 };
